@@ -1,11 +1,12 @@
 import { useState } from "react";
-import type { Produk } from "../types";
+import type { ProdukInput } from "../types";
 
 interface FormTambahProdukProps {
-  onTambahProduk: (produk: Produk) => void;
+  onTambahProduk: (produk: ProdukInput) => Promise<boolean>;
+  sedangMenyimpan: boolean;
 }
 
-function FormTambahProduk({ onTambahProduk }: FormTambahProdukProps) {
+function FormTambahProduk({ onTambahProduk, sedangMenyimpan }: FormTambahProdukProps) {
   const [nama, setNama] = useState("");
   const [harga, setHarga] = useState("");
   const [kategori, setKategori] = useState("Smartphone");
@@ -20,7 +21,7 @@ function FormTambahProduk({ onTambahProduk }: FormTambahProdukProps) {
     "Kamera",
   ];
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!nama.trim() || !harga || !deskripsi.trim()) {
@@ -28,20 +29,19 @@ function FormTambahProduk({ onTambahProduk }: FormTambahProdukProps) {
       return;
     }
 
-    const produkBaru: Produk = {
-      id: Date.now(),
+    const berhasil = await onTambahProduk({
       nama: nama.trim(),
       harga: Number(harga),
       kategori,
       deskripsi: deskripsi.trim(),
-    };
+    });
 
-    onTambahProduk(produkBaru);
-
-    setNama("");
-    setHarga("");
-    setKategori("Smartphone");
-    setDeskripsi("");
+    if (berhasil) {
+      setNama("");
+      setHarga("");
+      setKategori("Smartphone");
+      setDeskripsi("");
+    }
   };
 
   return (
@@ -62,6 +62,7 @@ function FormTambahProduk({ onTambahProduk }: FormTambahProdukProps) {
             className="px-3 py-2 border border-stone-300 rounded text-sm hover:border-stone-400 focus-visible:outline-2 focus-visible:outline-emerald-800 focus-visible:outline-offset-1"
             value={nama}
             onChange={(e) => setNama(e.target.value)}
+            disabled={sedangMenyimpan}
           />
         </div>
 
@@ -77,6 +78,7 @@ function FormTambahProduk({ onTambahProduk }: FormTambahProdukProps) {
             className="px-3 py-2 border border-stone-300 rounded text-sm hover:border-stone-400 focus-visible:outline-2 focus-visible:outline-emerald-800 focus-visible:outline-offset-1"
             value={harga}
             onChange={(e) => setHarga(e.target.value)}
+            disabled={sedangMenyimpan}
           />
         </div>
 
@@ -89,6 +91,7 @@ function FormTambahProduk({ onTambahProduk }: FormTambahProdukProps) {
             className="px-3 py-2 border border-stone-300 rounded text-sm cursor-pointer hover:border-stone-400 focus-visible:outline-2 focus-visible:outline-emerald-800 focus-visible:outline-offset-1"
             value={kategori}
             onChange={(e) => setKategori(e.target.value)}
+            disabled={sedangMenyimpan}
           >
             {kategoriList.map((kat) => (
               <option key={kat} value={kat}>
@@ -109,14 +112,16 @@ function FormTambahProduk({ onTambahProduk }: FormTambahProdukProps) {
             className="px-3 py-2 border border-stone-300 rounded text-sm hover:border-stone-400 focus-visible:outline-2 focus-visible:outline-emerald-800 focus-visible:outline-offset-1 resize-y"
             value={deskripsi}
             onChange={(e) => setDeskripsi(e.target.value)}
+            disabled={sedangMenyimpan}
           />
         </div>
 
         <button
           type="submit"
-          className="col-span-2 max-sm:col-span-1 bg-emerald-800 text-white py-2.5 rounded text-sm font-semibold cursor-pointer hover:bg-emerald-900 active:bg-emerald-950 min-h-[44px] focus-visible:outline-2 focus-visible:outline-emerald-800 focus-visible:outline-offset-2"
+          disabled={sedangMenyimpan}
+          className="col-span-2 max-sm:col-span-1 bg-emerald-800 text-white py-2.5 rounded text-sm font-semibold cursor-pointer hover:bg-emerald-900 active:bg-emerald-950 min-h-[44px] focus-visible:outline-2 focus-visible:outline-emerald-800 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:bg-stone-400"
         >
-          Tambah Produk
+          {sedangMenyimpan ? "Menyimpan..." : "Tambah Produk"}
         </button>
       </form>
     </section>

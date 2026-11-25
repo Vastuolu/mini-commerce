@@ -4,4 +4,8 @@ export interface Produk {
   harga: number;
   kategori: string;
   deskripsi: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+export type ProdukInput = Omit<Produk, "id" | "createdAt" | "updatedAt">;
