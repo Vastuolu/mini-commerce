@@ -1,4 +1,4 @@
-import type { Produk, ProdukInput } from "../types";
+import type { Produk, ProdukInput, UpdateProdukInput } from "../types";
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL ?? "http://localhost:3000").replace(
   /\/$/,
@@ -57,4 +57,14 @@ export function tambahProduk(data: ProdukInput): Promise<Produk> {
 
 export function hapusProduk(id: number): Promise<Produk> {
   return request<Produk>(`/produk/${id}`, { method: "DELETE" });
+}
+
+export function ubahProduk(
+  id: number,
+  data: UpdateProdukInput,
+): Promise<Produk> {
+  return request<Produk>(`/produk/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
 }

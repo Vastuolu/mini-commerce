@@ -3,10 +3,11 @@ import type { Produk } from "../types";
 
 interface DaftarProdukProps {
   produkList: Produk[];
+  onUbah: (produk: Produk) => void;
   onHapus: (id: number) => void;
 }
 
-function DaftarProduk({ produkList, onHapus }: DaftarProdukProps) {
+function DaftarProduk({ produkList, onUbah, onHapus }: DaftarProdukProps) {
   if (produkList.length === 0) {
     return (
       <section className="mb-8">
@@ -26,7 +27,12 @@ function DaftarProduk({ produkList, onHapus }: DaftarProdukProps) {
       <h2 className="text-lg font-semibold mb-3">Daftar Produk</h2>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-3 max-sm:grid-cols-1">
         {produkList.map((produk) => (
-          <KartuProduk key={produk.id} produk={produk} onHapus={onHapus} />
+          <KartuProduk
+            key={produk.id}
+            produk={produk}
+            onUbah={onUbah}
+            onHapus={onHapus}
+          />
         ))}
       </div>
     </section>

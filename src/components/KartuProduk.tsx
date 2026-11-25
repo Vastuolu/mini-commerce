@@ -3,10 +3,11 @@ import { formatRupiah } from "../utils/moneyFormat";
 
 interface KartuProdukProps {
   produk: Produk;
+  onUbah: (produk: Produk) => void;
   onHapus: (id: number) => void;
 }
 
-function KartuProduk({ produk, onHapus }: KartuProdukProps) {
+function KartuProduk({ produk, onUbah, onHapus }: KartuProdukProps) {
 
   return (
     <article className="bg-white rounded-md border border-stone-200 p-4 flex flex-col hover:border-stone-400">
@@ -21,12 +22,20 @@ function KartuProduk({ produk, onHapus }: KartuProdukProps) {
         <span className="text-sm font-bold text-emerald-800">
           {formatRupiah(produk.harga)}
         </span>
-        <button
-          className="border border-orange-700 text-orange-700 px-2.5 py-1 rounded text-xs font-semibold cursor-pointer hover:bg-orange-700 hover:text-white active:bg-orange-800 active:text-white focus-visible:outline-2 focus-visible:outline-orange-700 focus-visible:outline-offset-1"
-          onClick={() => onHapus(produk.id)}
-        >
-          Hapus
-        </button>
+        <div className="flex gap-2">
+          <button
+            className="border border-emerald-700 text-emerald-800 px-2.5 py-1 rounded text-xs font-semibold cursor-pointer hover:bg-emerald-800 hover:text-white active:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-emerald-800 focus-visible:outline-offset-1"
+            onClick={() => onUbah(produk)}
+          >
+            Ubah
+          </button>
+          <button
+            className="border border-orange-700 text-orange-700 px-2.5 py-1 rounded text-xs font-semibold cursor-pointer hover:bg-orange-700 hover:text-white active:bg-orange-800 active:text-white focus-visible:outline-2 focus-visible:outline-orange-700 focus-visible:outline-offset-1"
+            onClick={() => onHapus(produk.id)}
+          >
+            Hapus
+          </button>
+        </div>
       </div>
     </article>
   );

@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import RingkasanProduk from "./components/RingkasanProduk";
 import FormTambahProduk from "./components/FormTambahProduk";
+import FormUbahProduk from "./components/FormUbahProduk";
 import DaftarProduk from "./components/DaftarProduk";
-import type { Produk, ProdukInput } from "./types";
-import { ambilProduk, hapusProduk, tambahProduk } from "./api/produk";
+import type { Produk, ProdukInput, UpdateProdukInput } from "./types";
+import { ambilProduk, hapusProduk, tambahProduk, ubahProduk } from "./api/produk";
 
 function App() {
   const [produkList, setProdukList] = useState<Produk[]>([]);
   const [memuat, setMemuat] = useState(true);
   const [menyimpan, setMenyimpan] = useState(false);
+  const [menyimpanEdit, setMenyimpanEdit] = useState(false);
+  const [produkDiedit, setProdukDiedit] = useState<Produk | null>(null);
   const [pesanError, setPesanError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -72,6 +75,20 @@ function App() {
     }
   };
 
+  const handleUbahProduk = async (id: number, data: UpdateProdukInput) => {
+    setMenyimpanEdit(true);
+    setPesanError(null);
+
+    try {
+      const produkDiperbarui = await ubahProduk(id, data);
+      setProdukList((prev) =>
+        prev.map((produk) => (produk.id === id ? produkDiperbarui : produk)),
+      );
+    } finally {
+      setMenyimpanEdit(false);
+    }
+  };
+
   const handleHapusProduk = async (id: number) => {
     if (!window.confirm("Hapus produk ini dari katalog?")) {
       return;
@@ -118,10 +135,23 @@ function App() {
               onTambahProduk={handleTambahProduk}
               sedangMenyimpan={menyimpan}
             />
-            <DaftarProduk produkList={produkList} onHapus={handleHapusProduk} />
+            <DaftarProduk
+              produkList={produkList}
+              onUbah={(produk) => setProdukDiedit(produk)}
+              onHapus={handleHapusProduk}
+            />
           </>
         )}
       </main>
+
+      {produkDiedit && (
+        <FormUbahProduk
+          produk={produkDiedit}
+          sedangMenyimpan={menyimpanEdit}
+          onSimpan={handleUbahProduk}
+          onBatal={() => setProdukDiedit(null)}
+        />
+      )}
     </div>
   );
 }

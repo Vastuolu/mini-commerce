@@ -9,3 +9,5 @@ export interface Produk {
 }
 
 export type ProdukInput = Omit<Produk, "id" | "createdAt" | "updatedAt">;
+
+export type UpdateProdukInput = Partial<ProdukInput>;
